@@ -300,73 +300,73 @@ def open_close_graph(value):
     [Input('forecast-button', 'n_clicks')],
     [State('ticker-drop', 'value')]
 )
-def fore_open(n,value):
-    """
-    This callback generates a Time series Graph with 
-    forecasting on Opening prices of selected tick using 
-    LSTM Neural network model with dataframe.
+# def fore_open(n,value):
+#     """
+#     This callback generates a Time series Graph with 
+#     forecasting on Opening prices of selected tick using 
+#     LSTM Neural network model with dataframe.
     
-    """
-    if n is None:
-        raise PreventUpdate    
-    else:
-        #Load the datasets
-        df = load_daily(value)
+#     """
+#     if n is None:
+#         raise PreventUpdate    
+#     else:
+#         #Load the datasets
+#         df = load_daily(value)
 
-        #Filter datasets
-        df_open = df.filter(['Open'])
+#         #Filter datasets
+#         df_open = df.filter(['Open'])
             
-        #Save values in an array
-        data = df_open.values
+#         #Save values in an array
+#         data = df_open.values
 
-        #assign test size
-        test_data_size = math.ceil(len(data)*.2) 
+#         #assign test size
+#         test_data_size = math.ceil(len(data)*.2) 
 
-        #SPlit datasets into Train and test
-        test_data = data[-(test_data_size + 60):,:]
+#         #SPlit datasets into Train and test
+#         test_data = data[-(test_data_size + 60):,:]
 
-        #Scale data sets
-        scaler = MinMaxScaler(feature_range=(0,1))
-        scaled_test = scaler.fit_transform(test_data)
+#         #Scale data sets
+#         scaler = MinMaxScaler(feature_range=(0,1))
+#         scaled_test = scaler.fit_transform(test_data)
 
-        #Split the labels and target and assign test data
-        X_test = []
-        y_test = df[-(test_data_size):]
+#         #Split the labels and target and assign test data
+#         X_test = []
+#         y_test = df[-(test_data_size):]
             
-        for i in range(60,len(scaled_test)):
-            X_test.append(scaled_test[i-60:i, 0])
+#         for i in range(60,len(scaled_test)):
+#             X_test.append(scaled_test[i-60:i, 0])
 
-        #Converting to numpy array
-        X_test = np.array(X_test)
+#         #Converting to numpy array
+#         X_test = np.array(X_test)
 
-        #Rehsape to (batch_size,time_steps,features)
-        X_test = np.reshape(X_test,(X_test.shape[0],X_test.shape[1],1))
+#         #Rehsape to (batch_size,time_steps,features)
+#         X_test = np.reshape(X_test,(X_test.shape[0],X_test.shape[1],1))
 
-        #Import & load the pickled model
-        model = tf.keras.models.load_model('LSTM2')
+#         #Import & load the pickled model
+#         model = tf.keras.models.load_model('LSTM2')
 
-        #Test/validate the model & inverse transoform to get the actual predictions
-        pred = model.predict(X_test)
-        predictions = scaler.inverse_transform(pred)
+#         #Test/validate the model & inverse transoform to get the actual predictions
+#         pred = model.predict(X_test)
+#         predictions = scaler.inverse_transform(pred)
 
-        #Caculate the rmse value for the predictions
-        #rmse = np.sqrt(np.mean(predictions - y_test)**2)
+#         #Caculate the rmse value for the predictions
+#         #rmse = np.sqrt(np.mean(predictions - y_test)**2)
 
-        #Plot the results 
-        train = df_open[:len(df_open)-test_data_size]
-        valid = df_open[len(train):]
-        valid['Predictions'] = predictions
-        #co_table = dbc.Table.from_dataframe(valid, striped=True, bordered=True, hover=True)
-        Open_forecast = go.Figure()
-        Open_forecast.add_trace(go.Scatter(x= df_open.index.values, y=df_open['Open'],name= "Train"))
-        Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Open'],name= "Val"))
-        Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Predictions'],name= "Predict"))
-        Open_forecast.layout.update(title =f"Forecasting on Opening prices for {value}", 
-                            yaxis_title="Opening Price in USD($)",
-                            legend_title="Legend",
-                            xaxis_rangeslider_visible=True)
+#         #Plot the results 
+#         train = df_open[:len(df_open)-test_data_size]
+#         valid = df_open[len(train):]
+#         valid['Predictions'] = predictions
+#         #co_table = dbc.Table.from_dataframe(valid, striped=True, bordered=True, hover=True)
+#         Open_forecast = go.Figure()
+#         Open_forecast.add_trace(go.Scatter(x= df_open.index.values, y=df_open['Open'],name= "Train"))
+#         Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Open'],name= "Val"))
+#         Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Predictions'],name= "Predict"))
+#         Open_forecast.layout.update(title =f"Forecasting on Opening prices for {value}", 
+#                             yaxis_title="Opening Price in USD($)",
+#                             legend_title="Legend",
+#                             xaxis_rangeslider_visible=True)
 
-        return Open_forecast
+#         return Open_forecast
 
 @app.callback(
     Output('Close-forecast', 'figure'),
