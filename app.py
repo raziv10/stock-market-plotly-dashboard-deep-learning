@@ -12,8 +12,8 @@ import numpy as np
 import yfinance as yf
 from dash.exceptions import PreventUpdate
 import plotly.graph_objects as go
-from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf
+## from sklearn.preprocessing import MinMaxScaler
+## import tensorflow as tf
 from alpha_vantage.timeseries import TimeSeries
 
 
