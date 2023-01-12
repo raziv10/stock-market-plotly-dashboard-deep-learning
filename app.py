@@ -19,7 +19,7 @@ from alpha_vantage.timeseries import TimeSeries
 
 
 #Constants to download data
-START = "2020-01-01"
+START = "2018-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 API_KEY = 'T6X62ZNC78VB55YK'
 IMGE = 'assets/rss.png'
@@ -295,151 +295,151 @@ def open_close_graph(value):
     return fig, high_low_fig, op, hg, lw, cl, vol
 
 #Callback for foreacast
-# @app.callback(
-#     Output('Open-forecast', 'figure'),
-#     [Input('forecast-button', 'n_clicks')],
-#     [State('ticker-drop', 'value')]
-# )
-# def fore_open(n,value):
-#     """
-#     This callback generates a Time series Graph with 
-#     forecasting on Opening prices of selected tick using 
-#     LSTM Neural network model with dataframe.
+@app.callback(
+    Output('Open-forecast', 'figure'),
+    [Input('forecast-button', 'n_clicks')],
+    [State('ticker-drop', 'value')]
+)
+def fore_open(n,value):
+    """
+    This callback generates a Time series Graph with 
+    forecasting on Opening prices of selected tick using 
+    LSTM Neural network model with dataframe.
     
-#     """
-#     if n is None:
-#         raise PreventUpdate    
-#     else:
-#         #Load the datasets
-#         df = load_daily(value)
+    """
+    if n is None:
+        raise PreventUpdate    
+    else:
+        #Load the datasets
+        df = load_daily(value)
 
-#         #Filter datasets
-#         df_open = df.filter(['Open'])
+        #Filter datasets
+        df_open = df.filter(['Open'])
             
-#         #Save values in an array
-#         data = df_open.values
+        #Save values in an array
+        data = df_open.values
 
-#         #assign test size
-#         test_data_size = math.ceil(len(data)*.2) 
+        #assign test size
+        test_data_size = math.ceil(len(data)*.2) 
 
-#         #SPlit datasets into Train and test
-#         test_data = data[-(test_data_size + 60):,:]
+        #SPlit datasets into Train and test
+        test_data = data[-(test_data_size + 60):,:]
 
-#         #Scale data sets
-#         scaler = MinMaxScaler(feature_range=(0,1))
-#         scaled_test = scaler.fit_transform(test_data)
+        #Scale data sets
+        scaler = MinMaxScaler(feature_range=(0,1))
+        scaled_test = scaler.fit_transform(test_data)
 
-#         #Split the labels and target and assign test data
-#         X_test = []
-#         y_test = df[-(test_data_size):]
+        #Split the labels and target and assign test data
+        X_test = []
+        y_test = df[-(test_data_size):]
             
-#         for i in range(60,len(scaled_test)):
-#             X_test.append(scaled_test[i-60:i, 0])
+        for i in range(60,len(scaled_test)):
+            X_test.append(scaled_test[i-60:i, 0])
 
-#         #Converting to numpy array
-#         X_test = np.array(X_test)
+        #Converting to numpy array
+        X_test = np.array(X_test)
 
-#         #Rehsape to (batch_size,time_steps,features)
-#         X_test = np.reshape(X_test,(X_test.shape[0],X_test.shape[1],1))
+        #Rehsape to (batch_size,time_steps,features)
+        X_test = np.reshape(X_test,(X_test.shape[0],X_test.shape[1],1))
 
-#         #Import & load the pickled model
-#         model = tf.keras.models.load_model('LSTM2')
+        #Import & load the pickled model
+        model = tf.keras.models.load_model('LSTM2')
 
-#         #Test/validate the model & inverse transoform to get the actual predictions
-#         pred = model.predict(X_test)
-#         predictions = scaler.inverse_transform(pred)
+        #Test/validate the model & inverse transoform to get the actual predictions
+        pred = model.predict(X_test)
+        predictions = scaler.inverse_transform(pred)
 
-#         #Caculate the rmse value for the predictions
-#         #rmse = np.sqrt(np.mean(predictions - y_test)**2)
+        #Caculate the rmse value for the predictions
+        #rmse = np.sqrt(np.mean(predictions - y_test)**2)
 
-#         #Plot the results 
-#         train = df_open[:len(df_open)-test_data_size]
-#         valid = df_open[len(train):]
-#         valid['Predictions'] = predictions
-#         #co_table = dbc.Table.from_dataframe(valid, striped=True, bordered=True, hover=True)
-#         Open_forecast = go.Figure()
-#         Open_forecast.add_trace(go.Scatter(x= df_open.index.values, y=df_open['Open'],name= "Train"))
-#         Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Open'],name= "Val"))
-#         Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Predictions'],name= "Predict"))
-#         Open_forecast.layout.update(title =f"Forecasting on Opening prices for {value}", 
-#                             yaxis_title="Opening Price in USD($)",
-#                             legend_title="Legend",
-#                             xaxis_rangeslider_visible=True)
+        #Plot the results 
+        train = df_open[:len(df_open)-test_data_size]
+        valid = df_open[len(train):]
+        valid['Predictions'] = predictions
+        #co_table = dbc.Table.from_dataframe(valid, striped=True, bordered=True, hover=True)
+        Open_forecast = go.Figure()
+        Open_forecast.add_trace(go.Scatter(x= df_open.index.values, y=df_open['Open'],name= "Train"))
+        Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Open'],name= "Val"))
+        Open_forecast.add_trace(go.Scatter(x= valid.index.values, y=valid['Predictions'],name= "Predict"))
+        Open_forecast.layout.update(title =f"Forecasting on Opening prices for {value}", 
+                            yaxis_title="Opening Price in USD($)",
+                            legend_title="Legend",
+                            xaxis_rangeslider_visible=True)
 
-#         return Open_forecast
+        return Open_forecast
 
-# @app.callback(
-#     Output('Close-forecast', 'figure'),
-#     [Input('forecast-button', 'n_clicks')],
-#     [State('ticker-drop', 'value')]
-# )
-# def fore_close(n, value):
-#     """
-#     This callback generates a Time series Graph with 
-#     forecasting on Closing prices of selected tick using 
-#     LSTM Neural network model with dataframe.
+@app.callback(
+    Output('Close-forecast', 'figure'),
+    [Input('forecast-button', 'n_clicks')],
+    [State('ticker-drop', 'value')]
+)
+def fore_close(n, value):
+    """
+    This callback generates a Time series Graph with 
+    forecasting on Closing prices of selected tick using 
+    LSTM Neural network model with dataframe.
     
-#     """
-#     if n is None:
-#         raise PreventUpdate    
-#     else:
-#         #load the datasets
-#         df_new = load_daily(value)
+    """
+    if n is None:
+        raise PreventUpdate    
+    else:
+        #load the datasets
+        df_new = load_daily(value)
 
-#         #Filter the datasets 
-#         df_close = df_new.filter(['Close'])
+        #Filter the datasets 
+        df_close = df_new.filter(['Close'])
 
-#         #Save values in an array
-#         data_close = df_close.values
+        #Save values in an array
+        data_close = df_close.values
 
-#         #assign test size
-#         cl_test_data_size = math.ceil(len(data_close)*.2)  
+        #assign test size
+        cl_test_data_size = math.ceil(len(data_close)*.2)  
         
-#         #SPlit datasets into Train and test
-#         cl_test_data = data_close[-(cl_test_data_size + 60):,:]
+        #SPlit datasets into Train and test
+        cl_test_data = data_close[-(cl_test_data_size + 60):,:]
 
-#         #Scale data sets
-#         scaler = MinMaxScaler(feature_range=(0,1))
-#         scaled_cl_test = scaler.fit_transform(cl_test_data)
+        #Scale data sets
+        scaler = MinMaxScaler(feature_range=(0,1))
+        scaled_cl_test = scaler.fit_transform(cl_test_data)
 
-#         #Split the labels and target and assign test data
-#         cl_X_test = []
-#         #cl_y_test = df_close[-(cl_test_data_size):]
+        #Split the labels and target and assign test data
+        cl_X_test = []
+        #cl_y_test = df_close[-(cl_test_data_size):]
         
-#         for i in range(60,len(scaled_cl_test)):
-#             cl_X_test.append(scaled_cl_test[i-60:i, 0])
+        for i in range(60,len(scaled_cl_test)):
+            cl_X_test.append(scaled_cl_test[i-60:i, 0])
 
-#         #Converting to numpy array
-#         cl_X_test = np.array(cl_X_test)
+        #Converting to numpy array
+        cl_X_test = np.array(cl_X_test)
 
-#         #Rehsape to (batch_size,time_steps,features)
-#         cl_X_test = np.reshape(cl_X_test, (cl_X_test.shape[0], cl_X_test.shape[1], 1))
+        #Rehsape to (batch_size,time_steps,features)
+        cl_X_test = np.reshape(cl_X_test, (cl_X_test.shape[0], cl_X_test.shape[1], 1))
 
-#         #Import & load the pickled model
-#         model1 = tf.keras.models.load_model('LSTM2.h5')
+        #Import & load the pickled model
+        model1 = tf.keras.models.load_model('LSTM2.h5')
 
-#         #Test/validate the model & inverse transoform to get the actual predictions
-#         fore = model1.predict(cl_X_test)
-#         forecast = scaler.inverse_transform(fore)
+        #Test/validate the model & inverse transoform to get the actual predictions
+        fore = model1.predict(cl_X_test)
+        forecast = scaler.inverse_transform(fore)
 
-#         #Caculate the rmse value for the predeictions
-#         #cl_rmse = np.sqrt(np.mean(forecast - cl_y_test)**2)
+        #Caculate the rmse value for the predeictions
+        #cl_rmse = np.sqrt(np.mean(forecast - cl_y_test)**2)
 
-#         #Plot the results 
-#         cl_train = df_close[:len(df_close)-cl_test_data_size]
-#         cl_valid = df_close[len(cl_train):]
-#         cl_valid['predictions'] = forecast
-#         #cl_table = dbc.Table.from_dataframe(cl_valid, striped=True, bordered=True, hover=True)
-#         Close_forecast = go.Figure()
-#         Close_forecast.add_trace(go.Scatter(x= df_close.index.values, y=df_close['Close'],name= "Train"))
-#         Close_forecast.add_trace(go.Scatter(x= cl_valid.index.values, y=cl_valid['Close'],name= "Val"))
-#         Close_forecast.add_trace(go.Scatter(x= cl_valid.index.values, y=cl_valid['predictions'],name= "predictions"))
-#         Close_forecast.layout.update(title =f"Forecasting on Closing prices for {value}", 
-#                             yaxis_title="Closing Price in USD($)",
-#                             legend_title="Legend",
-#                             xaxis_rangeslider_visible=True)
+        #Plot the results 
+        cl_train = df_close[:len(df_close)-cl_test_data_size]
+        cl_valid = df_close[len(cl_train):]
+        cl_valid['predictions'] = forecast
+        #cl_table = dbc.Table.from_dataframe(cl_valid, striped=True, bordered=True, hover=True)
+        Close_forecast = go.Figure()
+        Close_forecast.add_trace(go.Scatter(x= df_close.index.values, y=df_close['Close'],name= "Train"))
+        Close_forecast.add_trace(go.Scatter(x= cl_valid.index.values, y=cl_valid['Close'],name= "Val"))
+        Close_forecast.add_trace(go.Scatter(x= cl_valid.index.values, y=cl_valid['predictions'],name= "predictions"))
+        Close_forecast.layout.update(title =f"Forecasting on Closing prices for {value}", 
+                            yaxis_title="Closing Price in USD($)",
+                            legend_title="Legend",
+                            xaxis_rangeslider_visible=True)
 
-#         return Close_forecast
+        return Close_forecast
 
 @app.callback(
     Output('ohlc','figure'),
