@@ -19,7 +19,7 @@ from alpha_vantage.timeseries import TimeSeries
 
 
 #Constants to download data
-START = "2018-01-01"
+START = "2020-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 API_KEY = 'T6X62ZNC78VB55YK'
 IMGE = 'assets/rss.png'
