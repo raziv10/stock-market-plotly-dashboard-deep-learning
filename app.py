@@ -468,5 +468,5 @@ def ohlc_graph(value):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, )
+    app.run(host='0.0.0.0', port=80)
 
